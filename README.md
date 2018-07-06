@@ -7,11 +7,12 @@
     2. [Check MAC address and product_uuid](#check-mac-and-uuid)
     3. [Configure firewall for Master node](#configure-master-firewall)
     4. [Configure firewall for Worker node](#configure-worker-firewall)
+    5. [Installing kubeadm, kubelet and kubectl](#installing-kubeadm-kubelet-kubectl)
 2. [Useful Commands](#useful-commands)
     1. [General](#useful-general-commands)
-    2. [**ufw**](#useful-ufw-commands)
-    3. [**kubectl**](#useful-kubectl-commands)
-    4. [**kubeadm**](#useful-kubeadm-commands)
+    2. [ufw](#useful-ufw-commands)
+    3. [kubectl](#useful-kubectl-commands)
+    4. [kubeadm](#useful-kubeadm-commands)
 
 <a name="node-setup"/></a>
 ## Node Setup
@@ -176,6 +177,48 @@ To                         Action      From
 10250 (v6)                 ALLOW IN    Anywhere (v6)             
 10255 (v6)                 ALLOW IN    Anywhere (v6)             
 30000:32767/tcp (v6)       ALLOW IN    Anywhere (v6) 
+```
+
+<a name="installing-kubeadm-kubelet-kubectl"/></a>
+### Installing kubeadm, kubelet and kubectl
+
+Install these packages on all of your machines:
+
+* kubeadm: the command to bootstrap the cluster.
+
+* kubelet: the component that runs on all of the machines in your cluster and does things like starting pods and containers.
+
+* kubectl: the command line util to talk to your cluster.
+
+``` bash
+$ sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+apt-transport-https is already the newest version (1.2.27).
+curl is already the newest version (7.47.0-1ubuntu2.8).
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+$ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+OK
+$ echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+$ sudo apt-get update
+Hit:1 https://download.docker.com/linux/ubuntu xenial InRelease
+Get:2 http://security.ubuntu.com/ubuntu xenial-security InRelease [107 kB]                  
+Fetched 363 kB in 2s (142 kB/s)       
+Reading package lists... Done
+$ sudo apt-get install -y kubelet kubeadm kubectl
+Setting up cri-tools (1.11.0-00) ...
+Setting up ebtables (2.0.10.4-3.4ubuntu2.16.04.2) ...
+update-rc.d: warning: start and stop actions are no longer supported; falling back to defaults
+Setting up kubernetes-cni (0.6.0-00) ...
+Setting up socat (1.7.3.1-1) ...
+Setting up kubelet (1.11.0-00) ...
+Setting up kubectl (1.11.0-00) ...
+Setting up kubeadm (1.11.0-00) ...
+Processing triggers for systemd (229-4ubuntu21.2) ...
+Processing triggers for ureadahead (0.100.0-19) ...
 ```
 
 <a name="useful-commands"/></a>
