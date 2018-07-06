@@ -4,8 +4,9 @@
 
 1. [Node Setup](#node-setup)
 2. [Useful General Commands](#useful-general-commands)
-3. [Useful **kubectl** Commands](#useful-kubectl-commands)
-4. [Useful **kubeadm** Commands](#useful-kubeadm-commands)
+3. [Useful **ufw** Commands](#useful-ufw-commands)
+4. [Useful **kubectl** Commands](#useful-kubectl-commands)
+5. [Useful **kubeadm** Commands](#useful-kubeadm-commands)
 
 <a name="node-setup"/></a>
 ### Node Setup
@@ -16,9 +17,9 @@ Check if Node is running Ubuntu 16.04 or later.
 $ lsb_release -a
 No LSB modules are available.
 Distributor ID:	Ubuntu
-Description:	Ubuntu 16.04.4 LTS
-Release:		16.04
-Codename:		xenial
+Description:    Ubuntu 16.04.4 LTS
+Release:        16.04
+Codename:       xenial
 ```
 
 Check for unique MAC address and product__uuid for every node.
@@ -117,6 +118,17 @@ To                         Action      From
 | `lsb_release -a` | Display the Ubuntu version. |
 | `ifconfig -a` | Display all network interfaces with IPv4 and MAC address. |
 | `ip route get 8.8.8.8 \| awk '{print $NF; exit}'` | Display IP address that is currently used for Internet connections. |
+
+<a name="useful-ufw-commands"/></a>
+### Useful `ufw` Commands
+| Command | Description |
+| --- | --- |
+| `sudo ufw enable` | Enable ufw. |
+| `sudo ufw disable` | Disable ufw. Any rules created with UFW will no longer be active. |
+| `sudo ufw status verbose` | Check if ufw is running. Displays firewall rules if active. |
+| `sudo ufw allow 80`| Add rule to allow all traffic to port 80. |
+| `sudo ufw delete allow 80` | Remove rule from firewall. |
+
 
 <a name="useful-kubectl-commands"/></a>
 ### Useful `kubectl` Commands
