@@ -1,15 +1,23 @@
-## Kubernetes
+# Kubernetes
 
 ### Table of Contents
 
 1. [Node Setup](#node-setup)
-2. [Useful General Commands](#useful-general-commands)
-3. [Useful **ufw** Commands](#useful-ufw-commands)
-4. [Useful **kubectl** Commands](#useful-kubectl-commands)
-5. [Useful **kubeadm** Commands](#useful-kubeadm-commands)
+    1. [Check OS version](#check-os-version)
+    2. [Check MAC address and product_uuid](#check-mac-and-uuid)
+    3. [Configure firewall for Master node](#configure-master-firewall)
+    4. [Configure firewall for Worker node](#configure-worker-firewall)
+2. [Useful Commands](#useful-commands)
+    1. [General](#useful-general-commands)
+    2. [**ufw**](#useful-ufw-commands)
+    3. [**kubectl**](#useful-kubectl-commands)
+    4. [**kubeadm**](#useful-kubeadm-commands)
 
 <a name="node-setup"/></a>
-### Node Setup
+## Node Setup
+
+<a name="check-os-version"/></a>
+### Check OS version
 
 Check if Node is running Ubuntu 16.04 or later.
 
@@ -21,6 +29,9 @@ Description:    Ubuntu 16.04.4 LTS
 Release:        16.04
 Codename:       xenial
 ```
+
+<a name="check-mac-and-uuid"/></a>
+### Check MAC address and product_uuid
 
 Check for unique MAC address and product__uuid for every node.
 
@@ -38,6 +49,9 @@ enp3s0    Link encap:Ethernet  HWaddr d0:50:99:1a:77:24
 $ sudo cat /sys/class/dmi/id/product_uuid
 1100XXXX-XXXX-XXX-XXXX-XXXXXXXX009
 ```
+
+<a name="configure-master-firewall"/></a>
+### Configure firewall for Master node
 
 Configure the firewall for Master node according to the following rules:
 
@@ -109,6 +123,63 @@ To                         Action      From
 10255 (v6)                 ALLOW IN    Anywhere (v6)             
 ```
 
+<a name="configure-worker-firewall"/></a>
+### Configure firewall for Worker node
+
+Configure the firewall for Worker node according to the following rules:
+
+| Protocol | Direction | Port Range | Purpose |
+| --- | --- | --- | --- |
+| TCP | Inbound | 22 | SSH |
+| TCP | Inbound | 10250 | Kubelet API |
+| TCP | Inbound | 10255 | read-only Kubelet API |
+| TCP | Inbound | 30000-32767 | NodePort Services |
+
+Use UFW, or Uncomplicated Firewall, to help setup the above rules on the Worker node.
+
+``` bash
+$ sudo ufw disable
+Firewall stopped and disabled on system startup
+$ sudo ufw status
+Status: inactive
+$ sudo ufw reset
+Resetting all rules to installed defaults. This may disrupt existing ssh
+connections. Proceed with operation (y|n)? y
+$ sudo ufw allow 22
+Rules updated
+Rules updated (v6)
+$ sudo ufw allow 10250
+Rules updated
+Rules updated (v6)
+$ sudo ufw allow 10255
+Rules updated
+Rules updated (v6)
+$ sudo ufw allow 30000:32767/tcp
+Rules updated
+Rules updated (v6)
+$ sudo ufw enable
+Command may disrupt existing ssh connections. Proceed with operation (y|n)? y
+Firewall is active and enabled on system startup
+$ sudo ufw status verbose
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), deny (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+22                         ALLOW IN    Anywhere                  
+10250                      ALLOW IN    Anywhere                  
+10255                      ALLOW IN    Anywhere                  
+30000:32767/tcp            ALLOW IN    Anywhere                  
+22 (v6)                    ALLOW IN    Anywhere (v6)             
+10250 (v6)                 ALLOW IN    Anywhere (v6)             
+10255 (v6)                 ALLOW IN    Anywhere (v6)             
+30000:32767/tcp (v6)       ALLOW IN    Anywhere (v6) 
+```
+
+<a name="useful-commands"/></a>
+## Useful Commands
 
 <a name="useful-general-commands"/></a>
 ### Useful General Commands
