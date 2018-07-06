@@ -18,7 +18,7 @@
 | --- | --- |
 | `lsb_release -a` | Display the Ubuntu version. |
 | `ifconfig -a` | Display all network interfaces with IPv4 and MAC address. |
-| <code>ip route get 8.8.8.8 | awk '{print $NF; exit}'</code> | Display IP address that is currently used for Internet connections. |
+| `ip route get 8.8.8.8 \| awk '{print $NF; exit}'` | Display IP address that is currently used for Internet connections. |
 
 <a name="useful-kubectl-commands"/></a>
 ## Useful `kubectl` Commands
