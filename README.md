@@ -37,6 +37,78 @@ enp3s0    Link encap:Ethernet  HWaddr d0:50:99:1a:77:24
 $ sudo cat /sys/class/dmi/id/product_uuid
 1100XXXX-XXXX-XXX-XXXX-XXXXXXXX009
 ```
+
+Configure the firewall for Master node according to the following rules:
+
+| Protocol | Direction | Port Range | Purpose |
+| --- | --- | --- | --- |
+| TCP | Inbound | 22 | SSH |
+| TCP | Inbound | 6443 | Kubernetes API server |
+| TCP | Inbound | 2379-2380 | etcd server client API |
+| TCP | Inbound | 10250 | Kubelet API |
+| TCP | Inbound | 10251 | kube-scheduler |
+| TCP | Inbound | 10252 | kube-controller-manager |
+| TCP | Inbound | 10255 | read-only Kubelet API |
+
+Use UFW, or Uncomplicated Firewall, to help setup the above rules on the Master node.
+
+``` bash
+$ sudo ufw disable
+Firewall stopped and disabled on system startup
+$ sudo ufw status
+Status: inactive
+$ sudo ufw reset
+Resetting all rules to installed defaults. This may disrupt existing ssh
+connections. Proceed with operation (y|n)? y
+$ sudo ufw allow 22
+Rules updated
+Rules updated (v6)
+$ sudo ufw allow 6443
+Rules updated
+Rules updated (v6)
+$ sudo ufw allow 2379:2380/tcp
+Rules updated
+Rules updated (v6)
+$ sudo ufw allow 10250
+Rules updated
+Rules updated (v6)
+$ sudo ufw allow 10251
+Rules updated
+Rules updated (v6)
+$ sudo ufw allow 10252
+Rules updated
+Rules updated (v6)
+$ sudo ufw allow 10255
+Rules updated
+Rules updated (v6)
+$ sudo ufw enable
+Command may disrupt existing ssh connections. Proceed with operation (y|n)? y
+Firewall is active and enabled on system startup
+$ sudo ufw status verbose
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), deny (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+22                         ALLOW IN    Anywhere                  
+6443                       ALLOW IN    Anywhere                  
+2379:2380/tcp              ALLOW IN    Anywhere                  
+10250                      ALLOW IN    Anywhere                  
+10251                      ALLOW IN    Anywhere                  
+10252                      ALLOW IN    Anywhere                  
+10255                      ALLOW IN    Anywhere                  
+22 (v6)                    ALLOW IN    Anywhere (v6)             
+6443 (v6)                  ALLOW IN    Anywhere (v6)             
+2379:2380/tcp (v6)         ALLOW IN    Anywhere (v6)             
+10250 (v6)                 ALLOW IN    Anywhere (v6)             
+10251 (v6)                 ALLOW IN    Anywhere (v6)             
+10252 (v6)                 ALLOW IN    Anywhere (v6)             
+10255 (v6)                 ALLOW IN    Anywhere (v6)             
+```
+
+
 <a name="useful-general-commands"/></a>
 ### Useful General Commands
 
