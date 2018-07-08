@@ -8,11 +8,13 @@
     3. [Configure firewall for Master node](#configure-master-firewall)
     4. [Configure firewall for Worker node](#configure-worker-firewall)
     5. [Installing kubeadm, kubelet and kubectl](#installing-kubeadm-kubelet-kubectl)
+    6. [Configure cgroup driver used by kubelet on Master Node](#configure-cgroup)
 2. [Useful Commands](#useful-commands)
     1. [General](#useful-general-commands)
     2. [ufw](#useful-ufw-commands)
-    3. [kubectl](#useful-kubectl-commands)
-    4. [kubeadm](#useful-kubeadm-commands)
+    3. [kubeadm](#useful-kubeadm-commands)
+    4. [kubelet](#useful-kubelet-commands)
+    5. [kubectl](#useful-kubectl-commands)
 
 <a name="node-setup"/></a>
 ## Node Setup
@@ -221,6 +223,35 @@ Processing triggers for systemd (229-4ubuntu21.2) ...
 Processing triggers for ureadahead (0.100.0-19) ...
 ```
 
+<a name="configure-cgroup"/></a>
+## Configure cgroup driver used by kubelet on Master Node
+
+Make sure that the cgroup driver used by kubelet is the same as the one used by Docker. Verify that your Docker cgroup driver matches the kubelet config:
+
+``` bash
+docker info | grep -i cgroup
+sudo cat /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+```
+
+If there are no `KUBELET_CGROUP_ARGS` in the **10-kubeadm.conf** file, add the following line:
+
+``` bash
+Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"
+```
+
+Otherwise, you can update like so:
+
+``` bash
+sudo sed -i "s/cgroup-driver=systemd/cgroup-driver=cgroupfs/g" /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+```
+
+Then restart kubelet:
+
+``` bash
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+```
+
 <a name="useful-commands"/></a>
 ## Useful Commands
 
@@ -237,12 +268,27 @@ Processing triggers for ureadahead (0.100.0-19) ...
 ### Useful `ufw` Commands
 | Command | Description |
 | --- | --- |
-| `sudo ufw enable` | Enable ufw. |
-| `sudo ufw disable` | Disable ufw. Any rules created with UFW will no longer be active. |
-| `sudo ufw status verbose` | Check if ufw is running. Displays firewall rules if active. |
-| `sudo ufw allow 80`| Add rule to allow all traffic to port 80. |
-| `sudo ufw delete allow 80` | Remove rule from firewall. |
+| `ufw enable` | Enable ufw. |
+| `ufw disable` | Disable ufw. Any rules created with UFW will no longer be active. |
+| `ufw status verbose` | Check if ufw is running. Displays firewall rules if active. |
+| `ufw allow 80`| Add rule to allow all traffic to port 80. |
+| `ufw delete allow 80` | Remove rule from firewall. |
 
+<a name="useful-kubeadm-commands"/></a>
+### Useful `kubeadm` Commands
+
+| Command | Description |
+| --- | --- |
+| `kubeadm token list` | List bootstrap tokens on the server. |
+| `kubeadm token create` |  Create bootstrap tokens on the server. |
+| `kubeadm token delete` | Delete bootstrap tokens on the server. |
+
+<a name="useful-kubelet-commands"/></a>
+### Useful `kubelet` Commands
+
+| Command | Description |
+| --- | --- |
+| `journalctl -u kubelet` | See kubelet systemd logs. |
 
 <a name="useful-kubectl-commands"/></a>
 ### Useful `kubectl` Commands
@@ -250,9 +296,8 @@ Processing triggers for ureadahead (0.100.0-19) ...
 | Command | Description |
 | --- | --- |
 | `kubectl version` | Display the Kubernetes version running on the client and server. |
+| `kubectl get nodes` | Display all nodes in cluster. |
+| `kubectl drain <node name> --delete-local-data --force --ignore-daemonsets` | Safely evicts all pods from node. | 
+| `kubectl delete node <node name>` | Remove node from cluster. | 
 
-<a name="useful-kubeadm-commands"/></a>
-### Useful `kubeadm` Commands
 
-| Command | Description |
-| --- | --- |
