@@ -239,7 +239,7 @@ If there are no `KUBELET_CGROUP_ARGS` in the **10-kubeadm.conf** file, add the f
 Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"
 ```
 
-Otherwise, you can update like so:
+Otherwise, update it with the following command:
 
 ``` bash
 sudo sed -i "s/cgroup-driver=systemd/cgroup-driver=cgroupfs/g" /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
@@ -250,6 +250,15 @@ Then restart kubelet:
 ``` bash
 sudo systemctl daemon-reload
 sudo systemctl restart kubelet
+```
+
+## Starting a pod
+
+``` bash
+sudo kubectl run simple-python-app \
+     --image=afroisalreadyin/simple-python-app:v0.0.1 \
+     --image-pull-policy=Never \
+     --port=8080
 ```
 
 <a name="useful-commands"/></a>
