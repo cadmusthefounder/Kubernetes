@@ -204,7 +204,6 @@ curl is already the newest version (7.47.0-1ubuntu2.8).
 $ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 OK
 $ echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-deb http://apt.kubernetes.io/ kubernetes-xenial main
 $ sudo apt-get update
 Hit:1 https://download.docker.com/linux/ubuntu xenial InRelease
 Get:2 http://security.ubuntu.com/ubuntu xenial-security InRelease [107 kB]                  
